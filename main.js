@@ -26,7 +26,7 @@ app.listen(process.env.SERVER_IP, process.env.SERVER_PORT, () => {console.log("S
 	while(true){
 		const batteryStatus = await si.battery();
 		//console.log(batteryStatus)
-		if(batteryStatus.maxCapacity === batteryStatus.currentCapacity || batteryStatus.percent >= 50){
+		if(batteryStatus.maxCapacity === batteryStatus.currentCapacity || batteryStatus.percent >= 92){
 			try{
 				const plug = await axios({
 					method: "post",
@@ -43,7 +43,7 @@ app.listen(process.env.SERVER_IP, process.env.SERVER_PORT, () => {console.log("S
 				console.log(os.platform());
 				switch (os.platform()){
 					case "win32": child_process.exec("shutdown /h");
-					case "linux": child_process.exec("sudo shutdown now");
+					case "linux": child_process.exec("sudo systemctl suspend");
 				}
 			}
 			catch(err){
