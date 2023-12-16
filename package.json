@@ -1,0 +1,25 @@
+{
+  "name": "boulouhome",
+  "version": "1.0.0",
+  "description": "boulou application for smart plug",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://mirantoharison@github.com/eddycelestin15/BoulouHome.git"
+  },
+  "keywords": [
+    "boulou",
+    "plug",
+    "iot",
+    "smart"
+  ],
+  "author": "asterx",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/eddycelestin15/BoulouHome/issues"
+  },
+  "homepage": "https://github.com/eddycelestin15/BoulouHome#readme"
+}
