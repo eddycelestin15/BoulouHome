@@ -22,34 +22,48 @@ app.listen(process.env.SERVER_IP, process.env.SERVER_PORT, () => {console.log("S
 
 //console.log(process.env)
 (async () => {
-	let i = 0;
-	while(true){
-		const batteryStatus = await si.battery();
-		//console.log(batteryStatus)
-		if(batteryStatus.maxCapacity === batteryStatus.currentCapacity || batteryStatus.percent >= 92){
-			try{
-				const plug = await axios({
-					method: "post",
-					url: "https://us-central1-boulou-functions-for-devs.cloudfunctions.net/boulou_switch_device",
-					responseType: "json",
-					data: {
-						developerId: process.env.DEVELOPER_ID,
-						email: process.env.DEVELOPER_MAIL,
-						deviceId: process.env.PLUG_ID,
-						switch_status: "OFF"
-					}
-				})
+	await get_state_and_turn_pc_off();
+	return;
+})()
 
-				console.log(os.platform());
-				switch (os.platform()){
-					case "win32": child_process.exec("shutdown /h");
-					case "linux": child_process.exec("sudo systemctl suspend");
+async function get_state_and_turn_pc_off() {
+	const hour_start = 8;
+	const minute_start = 30;
+	const type_start = "pm";
+
+	const hour_end = 3
+	const minute_end = 30;
+	const type_end = "am"; 
+
+	const batteryStatus = await si.battery();
+	if(batteryStatus.maxCapacity === batteryStatus.currentCapacity || batteryStatus.percent >= 93){
+		try{
+			const plug = await axios({
+				method: "post",
+				url: "https://us-central1-boulou-functions-for-devs.cloudfunctions.net/boulou_switch_device",
+				responseType: "json",
+				data: {
+					developerId: process.env.DEVELOPER_ID,
+					email: process.env.DEVELOPER_MAIL,
+					deviceId: process.env.PLUG_ID,
+					switch_status: "OFF"
 				}
-			}
-			catch(err){
-				console.error(err);
+			});
+
+			switch (os.platform()){
+				case "win32": child_process.exec("shutdown /h");
+				case "linux": child_process.exec("sudo systemctl suspend");
 			}
 		}
-		break;
+		catch(err){
+			console.error(err);
+		}
+		finally{
+			return;
+		}
 	}
-})()
+	else {
+		await new Promise((resolve) => setTimeout(() => resolve(true), 10000));
+		await get_state_and_turn_pc_off();
+	}
+}
