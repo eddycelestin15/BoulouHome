@@ -1,0 +1,175 @@
+{
+	"info": {
+		"_postman_id": "8ed4210e-73e0-4374-adfe-e53a5700debd",
+		"name": "Boulou API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26905494"
+	},
+	"item": [
+		{
+			"name": "check_developerCredentials",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/boulou_check_developerCredentials?email={{email}}&developerId={{developerId}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"boulou_check_developerCredentials"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "{{email}}"
+						},
+						{
+							"key": "developerId",
+							"value": "{{developerId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "check_deviceStatus",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/boulou_check_deviceStatus?developerId={{developerId}}&email={{email}}&deviceId={{deviceId}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"boulou_check_deviceStatus"
+					],
+					"query": [
+						{
+							"key": "developerId",
+							"value": "{{developerId}}"
+						},
+						{
+							"key": "email",
+							"value": "{{email}}"
+						},
+						{
+							"key": "deviceId",
+							"value": "{{deviceId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_deviceStatistics",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/boulou_get_deviceStatistics?developerId={{developerId}}&email={{email}}&deviceId={{deviceId}}&period_type=year&period_value=2023",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"boulou_get_deviceStatistics"
+					],
+					"query": [
+						{
+							"key": "developerId",
+							"value": "{{developerId}}"
+						},
+						{
+							"key": "email",
+							"value": "{{email}}"
+						},
+						{
+							"key": "deviceId",
+							"value": "{{deviceId}}"
+						},
+						{
+							"key": "period_type",
+							"value": "year"
+						},
+						{
+							"key": "period_value",
+							"value": "2023"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "switch_device",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"developerId\": \"{{developerId}}\",\r\n  \"email\": \"{{email}}\",\r\n  \"deviceId\": \"{{deviceId}}\",\r\n  \"switch_status\": \"ON\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/boulou_switch_device",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"boulou_switch_device"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "developerId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "email",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "url",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "deviceId",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
