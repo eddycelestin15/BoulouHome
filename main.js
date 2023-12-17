@@ -9,6 +9,8 @@ const os = require("os");
 const dotenv = require("dotenv").config;
 const child_process = require("child_process");
 
+const { calculer } = require("./getConso");
+
 const Datastore = require("nedb-promises");
 const dbuser = new Datastore({ filename: path.join(__dirname, "db", "sample_user.db"), autoload: true });
 const dbplug = new Datastore({ filename: path.join(__dirname, "db", "sample_plug.db"), autoload: true });
@@ -115,6 +117,19 @@ app.put("/boulou/plugmanager/switch", async (req, res) => {
 		console.error(err);
 		res.status(502).send({...err});
 	}
+});
+
+app.get("/getConso", async (req, res) => {
+    try {
+        const {startDate, endDate } = req.query
+        const startD = new Date(startDate)
+        const endD = new Date(endDate)
+        console.log(startD, endD)
+        const conso = await calculer(startD, endD)
+        res.json({conso: conso})
+    } catch (err) {
+        console.error(err.message)
+    }
 });
 
 app.listen(process.env.SERVER_PORT, process.env.SERVER_IP, () => {console.log("Server running smoothly")});

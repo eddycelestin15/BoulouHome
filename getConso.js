@@ -7,8 +7,6 @@ const deviceId = process.env.PLUG_ID
 const url = "https://us-central1-boulou-functions-for-devs.cloudfunctions.net"
 console.log(developerId, email, deviceId)
 
-
-
 const getConsoMonthStart = async (startDate) => {
 //startDate est la date de dernier relevee
 
@@ -27,7 +25,7 @@ const getConsoMonthStart = async (startDate) => {
            });           
         arrDates.forEach((item) => {
             if(item.date > startDate){
-                console.log(item)
+                // console.log(item)
             }
         })
         // console.log(arrDates);
@@ -58,7 +56,7 @@ const getConsoMonthEnd = async (endDate) => {
            });           
         arrDates.forEach((item) => {
             if(item.date <= endDate){
-                console.log(item)
+                // console.log(item)
             }
         })
 
@@ -75,17 +73,16 @@ const getConsoMonthEnd = async (endDate) => {
         console.error(err.message)
     }
 }
-
-const startDate = new Date("2023-12-14");
-const endDate = new Date("2024-1-14");
-
 const calculer = async (start, end) => {
     const consoMoisPrec = await getConsoMonthStart(start)
     const consoMoisSuiv = await getConsoMonthEnd(end)
     const consommationTotal = consoMoisPrec + consoMoisSuiv
+    return consommationTotal
     console.log(consommationTotal, 'ilay consommation total')
 }
-calculer(startDate, endDate)
-
+const startDate = new Date("2023-12-14");
+const endDate = new Date("2024-1-14");
+// calculer(startDate, endDate)
+module.exports = {calculer}
 
 
