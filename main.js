@@ -34,9 +34,11 @@ async function get_state_and_turn_pc_off() {
 	const hour_end = 3
 	const minute_end = 30;
 	const type_end = "am"; 
+	const daty = new Date()
+	
 
 	const batteryStatus = await si.battery();
-	if(batteryStatus.maxCapacity === batteryStatus.currentCapacity || batteryStatus.percent >= 93){
+	if(batteryStatus.maxCapacity === batteryStatus.currentCapacity || batteryStatus.percent >= 88){
 		try{
 			const plug = await axios({
 				method: "post",
