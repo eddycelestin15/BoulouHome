@@ -1,0 +1,30 @@
+form{
+	max-width: 300px;
+	width: 80%;
+	border-radius: 15px;
+	padding: 50px 20px;
+	box-sizing: content-box;
+	box-shadow: 3px 3px 5px #dddddd;
+}
+
+form button{
+	width: fit-content;
+	margin: 10px auto;
+}
+
+form a{
+	display: block;
+	margin-top: 15px;
+}
+
+form a:visited{
+	color: var(--blue-color);
+}
+
+form .state-message-container{
+	font-size: var(--font-size-error);
+}
+
+form .state-message-container.error{
+	color: red;
+}
