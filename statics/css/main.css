@@ -1,0 +1,104 @@
+:root{
+	--font-size: 13px;
+	--font-size-input: 12px;
+	--font-size-error: 10px;
+	--font-size-label: 11px;
+
+	--blue-color: #106ac1;
+}
+
+*{
+	font-family: "poppins";
+	font-size: var(--font-size);
+}
+
+.input-wrapper{
+	position: relative;
+	width: 100%;
+	padding: 5px 0;
+	margin-bottom: 5px;
+	display: flex;
+	flex-direction: column;
+}
+
+.input-wrapper:not(.checkbox) input[type="email"],
+.input-wrapper:not(.checkbox) input[type="password"]{
+	border: 1px solid #bbbbbb;
+	border-radius: 4px;
+	padding: 5px 10px;
+	padding-top: 10px;
+	font-size: var(--font-size-input);
+	outline: none;
+	transition: border-color 100ms;
+}
+
+.input-wrapper:not(.checkbox) input:focus{
+	border-color: var(--blue-color);
+}
+
+.input-wrapper:not(.checkbox) label{
+	position: absolute;
+	top: -3px;
+	left: 10px;
+	background: #ffffff;
+	display: block;
+	padding: 0 8px;
+}
+
+.input-wrapper.checkbox{
+	display: grid;
+	grid-template-columns: 20px auto;
+	grid-column-gap: 5px;
+	width: calc(100% - 5px);
+	align-items: flex-start;
+}
+
+.input-wrapper label{
+	font-size: var(--font-size-label);
+}
+
+.input-wrapper span.message{
+	font-size: var(--font-size-error);
+	color: #606060;
+}
+
+.input-wrapper.error input{
+	border-color: red !important;
+}
+
+.input-wrapper.error span.message{
+	color: red;
+}
+
+button{
+	padding: 5px 15px;
+	border: 1px solid;
+	border-radius: 4px;
+	cursor: pointer;
+}
+
+button.default{
+	border-color: #d5d5d5;
+	background-image: linear-gradient(
+		to bottom right,
+		#f4f4f4,
+		#d1d1d1
+	);
+}
+
+body{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100vw;
+	height: 100vh;
+	box-sizing: border-box;
+	padding: 0;
+	margin: 0;
+}
+
+a{
+	font-size: var(--font-size-label);
+	text-decoration: none;
+	color: var(--blue-color);
+}

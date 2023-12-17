@@ -4,29 +4,65 @@ const si = require("systeminformation");
 const axios = require("axios");
 const app = express();
 
+const path = require("path");
 const os = require("os");
 const dotenv = require("dotenv").config;
 const child_process = require("child_process");
+
+const { calculer } = require("./getConso");
+
+const Datastore = require("nedb-promises");
+const db = new Datastore({ filename: path.join(__dirname, "db", "sample.db"), autoload: true });
+//db.insert({ email: "eddy.celestin.raf@gmail.com", password: "Yellow100=" });
 
 const PLUG_ON = "ON";
 const PLUG_OFF = "OFF";
 
 dotenv();
 
-/*app.use(cors());
+app.use(express.static("./statics"));
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended : false}));
 
-app.get("/plug/switch/", async () => {
-	console.log("")
+app.get("/boulou/plugmanager/home", async (req, res) => {
+	res.sendFile(path.join(__dirname, "view", "index.html"));
 });
 
-eaLU3732
+app.get("/boulou/plugmanager/dash", async (req, res) => {
+	res.sendFile(path.join(__dirname, "view", "manager.html"));
+});
 
-app.listen(process.env.SERVER_IP, process.env.SERVER_PORT, () => {console.log("Server running smoothly")});*/
+app.post("/boulou/plugmanager/connect_account", async (req, res) => {
+	const data = {...req.body};
+	const mail = data.mail;
+	const password = data.password;
+
+	const account = await db.find({ mail });
+	if(account.length === 0) res.send({notfound: true, message: "Le compte auquel vous essayez de vous connecter est introuvable"});
+	else{
+		if(account[0].password === password) res.send({connected: true});
+		else res.send({connected: false, message: "Le mot de passe que vous avez saisi est incorrect"});
+	}
+});
+
+app.get("/getConso", async (req, res) => {
+    try {
+        const {startDate, endDate } = req.query
+        const startD = new Date(startDate)
+        const endD = new Date(endDate)
+        console.log(startD, endD)
+        const conso = await calculer(startD, endD)
+        res.json({conso: conso})
+    } catch (err) {
+        console.error(err.message)
+    }
+});
+
+app.listen(process.env.SERVER_PORT, process.env.SERVER_IP, () => {console.log("Server running smoothly")});
 
 //console.log(process.env)
-(async () => {
+/*(async () => {
 add_value_to_start_date();
 	await get_state_and_turn_pc_off();
 	return;
@@ -87,7 +123,7 @@ async function get_state_and_turn_pc_off() {
 			console.log("Plug turned off");
 			switch (os.platform()){
 				case "win32": child_process.exec("shutdown /h");
-				case "linux": child_process.exec("sudo systemctl suspend");
+				case "linux": child_process.exec("sudo shutdown now");
 			}
 		}
 		catch(err){
@@ -116,4 +152,4 @@ else{
 				}
 			});
 }
-}
+}*/
