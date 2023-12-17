@@ -1,16 +1,18 @@
+const express = require('express');
+const app = express();
+
 const { calculer } = require("./getConso");
-
-const startDate = new Date("2023-12-14");
-const endDate = new Date("2024-1-14");
-calculer(startDate, endDate)
-
-app.get("/getConso?dateDebut=", async (req, res) => {
+app.get("/getConso", async (req, res) => {
+    console.log('mande ny clg')
     try {
-        const { startDate, endDate } = req.query;dateFin
-        const conso = await calculer(startDate, endDate)
+        const {startDate, endDate } = req.query
+        const startD = new Date(startDate)
+        const endD = new Date(endDate)
+        console.log(startD, endD)
+        const conso = await calculer(startD, endD)
         res.json({conso: conso})
     } catch (err) {
         console.error(err.message)
     }
 });
-
+app.listen(3000, () => console.log('server running'))

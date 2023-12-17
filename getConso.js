@@ -25,7 +25,7 @@ const getConsoMonthStart = async (startDate) => {
            });           
         arrDates.forEach((item) => {
             if(item.date > startDate){
-                console.log(item)
+                // console.log(item)
             }
         })
         // console.log(arrDates);
@@ -56,7 +56,7 @@ const getConsoMonthEnd = async (endDate) => {
            });           
         arrDates.forEach((item) => {
             if(item.date <= endDate){
-                console.log(item)
+                // console.log(item)
             }
         })
 
