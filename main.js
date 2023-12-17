@@ -18,6 +18,8 @@ const dbplug = new Datastore({ filename: path.join(__dirname, "db", "sample_plug
 
 const PLUG_ON = "ON";
 const PLUG_OFF = "OFF";
+const SHUTDOWN_BOTH = "both";
+const SHUTDOWN_PLUG = "only";
 
 dotenv();
 
@@ -98,7 +100,6 @@ app.put("/boulou/plugmanager/switch", async (req, res) => {
 	state = state === 0 ? "OFF" : "ON";
 
 	try{
-		console.log(state)
 		const switch_plug = await axios({
 			method: "post",
 			url: `${process.env.DEVELOPER_API_URL}/boulou_switch_device`,
@@ -119,29 +120,23 @@ app.put("/boulou/plugmanager/switch", async (req, res) => {
 	}
 });
 
-app.get("/getConso", async (req, res) => {
-    try {
-        const { startDate, endDate } = req.query
-        const startD = new Date(startDate)
-        const endD = new Date(endDate)
-        console.log(startD, endD)
-        const conso = await calculer(startD, endD)
-        res.json({conso: conso})
-    } catch (err) {
-        console.error(err.message)
-    }
-});
-
+let plug_abort;
 app.get("/boulou/plugmanager/autoshutdown", async (req, res) => {
 	const data = {...req.query};
-	const batteryLowerLevel = data.percentage;
+	const batteryUpperLevel = data.percentage_off;
+	const shutdowntype = data.type;
 
 	async function get_state_and_turn_pc_off() {
 		const batteryStatus = await si.battery();
-		const plugStatus = batteryStatus.percent > batteryLowerLevel ? PLUG_OFF : PLUG_ON;
+		const plugStatus = batteryStatus.percent > batteryUpperLevel ? PLUG_OFF : PLUG_ON;
 
-		if(batteryStatus.percent >= batteryLowerLevel){
+		if(plug_abort) plug_abort.abort();
+
+		if(batteryStatus.percent >= batteryUpperLevel){
 			try{
+				plug_abort = new AbortController();
+
+				console.log("turn")
 				const plug = await axios({
 					method: "post",
 					url: "https://us-central1-boulou-functions-for-devs.cloudfunctions.net/boulou_switch_device",
@@ -151,16 +146,22 @@ app.get("/boulou/plugmanager/autoshutdown", async (req, res) => {
 						email: process.env.DEVELOPER_MAIL,
 						deviceId: process.env.PLUG_ID,
 						switch_status: plugStatus
-					}
+					},
+					signal: plug_abort?.signal
 				});
 
-				switch (os.platform()){
-					case "win32": child_process.exec("shutdown /h");
-					case "linux": child_process.exec("sudo shutdown now");
+				if(shutdowntype.toLowerCase() === SHUTDOWN_BOTH) {
+					switch (os.platform()){
+						case "win32": child_process.exec("shutdown /h");
+						case "linux": child_process.exec("sudo shutdown now");
+					}
 				}
+
+				res.status(200).send({success: true});
 			}
 			catch(err){
 				console.error(err);
+				res.status(502).send({aborted: true});
 			}
 			finally{
 				return;
@@ -173,8 +174,52 @@ app.get("/boulou/plugmanager/autoshutdown", async (req, res) => {
 	}
 
 	await get_state_and_turn_pc_off();
+});
 
-	res.status(200).send({success: true});
+app.get("/boulou/plugmanager/autoturn", async (req, res) => {
+	const data = {...req.query};
+	const batteryLowerLevel = data.percentage_on;
+
+	async function get_state_and_turn_pc_on() {
+		const batteryStatus = await si.battery();
+
+		if(plug_abort) plug_abort.abort();
+
+		if(batteryStatus.percent < batteryLowerLevel){
+			try{
+				plug_abort = new AbortController();
+
+				console.log("turn on")
+				const plug = await axios({
+					method: "post",
+					url: "https://us-central1-boulou-functions-for-devs.cloudfunctions.net/boulou_switch_device",
+					responseType: "json",
+					data: {
+						developerId: process.env.DEVELOPER_ID,
+						email: process.env.DEVELOPER_MAIL,
+						deviceId: process.env.PLUG_ID,
+						switch_status: PLUG_ON
+					},
+					signal: plug_abort?.signal
+				});
+
+				res.status(200).send({success: true});
+			}
+			catch(err){
+				console.error(err);
+				res.status(502).send({aborted: true});
+			}
+			finally{
+				return;
+			}
+		}
+		else {
+			await new Promise((resolve) => setTimeout(() => resolve(true), 10000));
+			await get_state_and_turn_pc_off();
+		}
+	}
+
+	await get_state_and_turn_pc_on();
 });
 
 app.listen(process.env.SERVER_PORT, process.env.SERVER_IP, () => {console.log("Server running smoothly")});

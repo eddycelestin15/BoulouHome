@@ -53,12 +53,27 @@
 			</div>
 			<div class="process">
 				<div class="parameters">
-					<p>Eteindre automatiquement ma prise et mon ordinateur quand les paramètres suivants sont répséctés:</p>
+					<div class="input-wrapper checkbox">
+						<input type="radio" name="shutdown-type" value="PLUG" checked>
+						<label>Eteindre automatiquement uniquement ma prise quand les paramètres suivants sont répséctés</label>
+					</div>
+					<div class="input-wrapper checkbox">
+						<input type="radio" name="shutdown-type" value="BOTH">
+						<label>Eteindre automatiquement ma prise et mon ordinateur quand les paramètres suivants sont répséctés</label>
+					</div>
 					<div class="input-wrapper">
 						<label>Niveau de la batterie de l'ordinateur:</label>
-						<input type="number" value=100 name="battery-percentage">
+						<input type="number" value=100 name="battery-percentage-off">
 					</div>
-					<button class="save"><i class="fa fa-save"></i>Enregistrer</button>
+					<button class="save-off save"><i class="fa fa-save"></i>Enregistrer</button>
+					<div style="padding-top: 10px; margin-top: 10px; border-top: 1px solid #dddddd;">
+						<p>Allumer automatiquement la prise quand les paramètres suivants sont réspéctés</p>
+						<div class="input-wrapper">
+							<label>Niveau de la batterie de l'ordinateur:</label>
+							<input type="number" value=100 name="battery-percentage-on">
+						</div>
+					</div>
+					<button class="save-on save"><i class="fa fa-save"></i>Enregistrer</button>
 				</div>
 			</div>
 		</div>

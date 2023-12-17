@@ -138,16 +138,35 @@ function append_plug_to_list(
 		}
 	});
 
-	console.log(plug)
-	const plug_process_autoshutdown = plug.querySelector(".process button.save");
-	const plug_process_percentage = plug.querySelector("[name='battery-percentage']");
+	const shutdown_radio = plug.querySelectorAll(".process [name='shutdown-type']"); 
+
+	const plug_process_autoshutdown = plug.querySelector(".process button.save-off");
+	const plug_process_percentage_off = plug.querySelector("[name='battery-percentage-off']");
+
+
+	const plug_process_autoturn = plug.querySelector(".process button.save-on");
+	const plug_process_percentage_on = plug.querySelector("[name='battery-percentage-on']");
+
 	plug_process_autoshutdown.addEventListener("click", () => {
+		const plug_process_type = shutdown_radio[1].checked ? "BOTH" : "PLUG";
 		axios({
 			method: "get",
 			url: "/boulou/plugmanager/autoshutdown",
 			params: {
 				id: plug.dataset.id,
-				percentage: plug_process_percentage.value
+				percentage_off: plug_process_percentage_off.value,
+				type: plug_process_type
+			}
+		});
+	});
+
+	plug_process_autoturn.addEventListener("click", () => {
+		axios({
+			method: "get",
+			url: "/boulou/plugmanager/autoturn",
+			params: {
+				id: plug.dataset.id,
+				percentage_on: plug_process_percentage_on.value,
 			}
 		});
 	});
