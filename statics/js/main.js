@@ -27,6 +27,11 @@ HTMLInputElement.prototype.checkValidation = function (){
 	return null;
 }
 
+function get_user_information(){
+	if(localStorage.getItem("mail")) return localStorage.getItem("mail");
+	else return sessionStorage.getItem("mail")
+}
+
 async function connect_to_server(
 	mail,
 	password,
@@ -40,8 +45,13 @@ async function connect_to_server(
 			responseType: "json"
 		});
 
-		if(res.connected) {
-			if(session) localStorage.setItem("session", 1);
+		if(res.data.connected) {
+			if(session) {
+				localStorage.setItem("session", 1);
+				localStorage.setItem("mail", mail);
+			}
+			else sessionStorage.setItem("mail", mail);
+
 
 			return {state: true};
 		}
@@ -50,4 +60,83 @@ async function connect_to_server(
 	catch(err){
 		throw err;
 	}
+}
+
+async function switch_plug(
+	id,
+	mail,
+	state
+){
+	try{
+		const switch_plug = await axios({
+			method: "put",
+			url: "/boulou/plugmanager/switch",
+			data: {
+				id,
+				mail,
+				state
+			},
+			responseType: "json"
+		});
+
+		return switch_plug;
+	}
+	catch(err){
+		throw err;
+	}
+} 
+
+function append_plug_to_list(
+	template,
+	data
+){
+	const plug_list_container = document.querySelector(".plug-list");
+	const plug_add_button = plug_list_container.querySelector(".add-plug");
+	const plug_template = template;
+	const plug_data = data;
+
+	plug_template.querySelector(".icon .status").classList.add(plug_data.status ? "online" : "offline");
+	plug_template.querySelector(".icon .status").innerHTML = plug_data.status ? `<i class="fa fa-exclamation-circle"></i> Active` : `<i class="fa fa-times"></i> Inactive`;
+	plug_template.querySelector(".info .info-container .id").textContent = plug_data.id;
+	plug_template.querySelector(".info .info-container .name").textContent = plug_data.name;
+
+	plug_list_container.insertBefore(plug_template, plug_add_button);
+
+
+	const plug_list = plug_list_container.querySelectorAll(".plug-entry:not(.add-plug)");
+	const plug = plug_list[plug_list.length - 1];
+	const plug_switch_button = plug.querySelector(".action .plug-switch");
+
+	plug.dataset.id = data.id;
+	plug.dataset.state = data.status ? 0 : 1;
+	plug_switch_button.addEventListener("click", async (e) => {
+		try{
+			const switch_status_element = plug.querySelector(".icon .status");
+			const switch_result = await switch_plug(
+				plug.dataset.id,
+				get_user_information(),
+				plug.dataset.state
+			);
+
+			if(switch_result.data.success) {
+				plug.setAttribute("data-state", switch_result.data.state === 0 ? 1 : 0);
+
+				if(switch_result.data.state === 0){
+					switch_status_element.classList.remove("online");
+					switch_status_element.classList.add("offline");
+					switch_status_element.innerHTML = `<i class="fa fa-times"></i> Inactive`;
+				}
+				else{
+					switch_status_element.classList.add("online");
+					switch_status_element.classList.remove("offline");
+					switch_status_element.innerHTML = `<i class="fa fa-exclamation-circle"></i> Active`;
+				}
+			}
+		}
+		catch(err){
+			console.error(err);
+		}
+	});
+
+	return null;
 }

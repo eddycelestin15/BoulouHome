@@ -4,9 +4,9 @@ const password_field = document.querySelector("form [name='boulou_password']");
 const session_checkbox = document.querySelector("form [name='session-active']");
 const state_message_container = document.querySelector("form .state-message-container");
 
-const session_state = parseInt(localStorage.getItem("session"));
+const session_state = localStorage.getItem("session");
 
-if(session_state){
+if(session_state === null || session_state === undefined){
 	mail_field.addEventListener("input", () => mail_field.checkValidation());
 	password_field.addEventListener("input", () => password_field.checkValidation());
 
@@ -22,6 +22,7 @@ if(session_state){
 				session_checkbox.checked
 			);
 
+			console.log(connect_state)
 			if(connect_state.state){
 				state_message_container.innerHTML = null;
 				state_message_container.style.marginTop = 0;

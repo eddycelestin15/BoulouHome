@@ -10,7 +10,8 @@ const dotenv = require("dotenv").config;
 const child_process = require("child_process");
 
 const Datastore = require("nedb-promises");
-const db = new Datastore({ filename: path.join(__dirname, "db", "sample.db"), autoload: true });
+const dbuser = new Datastore({ filename: path.join(__dirname, "db", "sample_user.db"), autoload: true });
+const dbplug = new Datastore({ filename: path.join(__dirname, "db", "sample_plug.db"), autoload: true });
 //db.insert({ email: "eddy.celestin.raf@gmail.com", password: "Yellow100=" });
 
 const PLUG_ON = "ON";
@@ -31,16 +32,88 @@ app.get("/boulou/plugmanager/dash", async (req, res) => {
 	res.sendFile(path.join(__dirname, "view", "manager.html"));
 });
 
+app.get("/boulou/plugmanager/get_device_list", async(req, res) => {
+
+});
+
+app.post("/boulou/plugmanager/verify_and_add_device", async(req, res) => {
+	const data = {...req.body};
+	const id = data.id;
+	const mail = data.mail;
+
+	try{
+		const verify = await axios({
+			method: "get",
+			url: `${process.env.DEVELOPER_API_URL}/boulou_check_deviceStatus`,
+			params: {
+				developerId: process.env.DEVELOPER_ID,
+				email: mail,
+				deviceId: id
+			},
+			responseType: "json"
+		});
+		console.log(verify.data);
+
+		if(verify.data.success){
+			const result = verify.data.result;
+
+			await dbplug.insert({
+				id: result.id,
+				name: result.name,
+				mail: mail
+			});
+
+			res.status(200).send({device: true, info: {id: result.id, name: result.name, status: result.status.switch}});
+		}
+		else{
+			res.status(200).send({deviceunrecognized: true, message: "L'ID ne correspond à aucune prise connéctée"});
+		}
+	}
+	catch(err){
+		console.error(err);
+		res.status(502).send({...err});
+	}	
+});
+
 app.post("/boulou/plugmanager/connect_account", async (req, res) => {
 	const data = {...req.body};
 	const mail = data.mail;
 	const password = data.password;
 
-	const account = await db.find({ mail });
-	if(account.length === 0) res.send({notfound: true, message: "Le compte auquel vous essayez de vous connecter est introuvable"});
+	const account = await dbuser.find({ mail });
+	if(account.length === 0) res.status(200).send({notfound: true, message: "Le compte auquel vous essayez de vous connecter est introuvable"});
 	else{
 		if(account[0].password === password) res.send({connected: true});
-		else res.send({connected: false, message: "Le mot de passe que vous avez saisi est incorrect"});
+		else res.status(200).send({connected: false, message: "Le mot de passe que vous avez saisi est incorrect"});
+	}
+});
+
+app.put("/boulou/plugmanager/switch", async (req, res) => {
+	const data = {...req.body};
+	const id = data.id;
+	const mail = data.mail;
+	let state = parseInt(data.state);
+	state = state === 0 ? "OFF" : "ON";
+
+	try{
+		console.log(state)
+		const switch_plug = await axios({
+			method: "post",
+			url: `${process.env.DEVELOPER_API_URL}/boulou_switch_device`,
+			data: {
+	  			developerId: process.env.DEVELOPER_ID,
+	  			email: mail,
+	  			deviceId: id,
+	  			switch_status: state
+			}
+		});
+
+		console.log(switch_plug.data)
+		res.status(200).send({success: true, state: parseInt(data.state) });
+	}
+	catch(err){
+		console.error(err);
+		res.status(502).send({...err});
 	}
 });
 
