@@ -117,8 +117,3 @@ else{
 			});
 }
 }
-
-
-function register_user(){
-	
-}
