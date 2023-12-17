@@ -87,7 +87,7 @@ async function get_state_and_turn_pc_off() {
 			console.log("Plug turned off");
 			switch (os.platform()){
 				case "win32": child_process.exec("shutdown /h");
-				case "linux": child_process.exec("sudo shutdown now");
+				case "linux": child_process.exec("sudo systemctl suspend");
 			}
 		}
 		catch(err){
