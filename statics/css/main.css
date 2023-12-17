@@ -22,7 +22,9 @@
 }
 
 .input-wrapper:not(.checkbox) input[type="email"],
-.input-wrapper:not(.checkbox) input[type="password"]{
+.input-wrapper:not(.checkbox) input[type="password"],
+.input-wrapper:not(.checkbox) input[type="number"]
+{
 	border: 1px solid #bbbbbb;
 	border-radius: 4px;
 	padding: 5px 10px;

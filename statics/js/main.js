@@ -138,5 +138,19 @@ function append_plug_to_list(
 		}
 	});
 
+	console.log(plug)
+	const plug_process_autoshutdown = plug.querySelector(".process button.save");
+	const plug_process_percentage = plug.querySelector("[name='battery-percentage']");
+	plug_process_autoshutdown.addEventListener("click", () => {
+		axios({
+			method: "get",
+			url: "/boulou/plugmanager/autoshutdown",
+			params: {
+				id: plug.dataset.id,
+				percentage: plug_process_percentage.value
+			}
+		});
+	});
+
 	return null;
 }

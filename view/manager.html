@@ -13,20 +13,25 @@
 	<script defer src="/js/manager.js"></script>
 </head>
 <body>
-	<main>
-		<div class="plug-list">
-			<div class="plug-entry add-plug">
-				<button class="icon">
-					<i class="fa fa-plus"></i> Ajotuer une nouvelle prise
-				</button>
+	<div class="manager-window plug" style="z-index: 10;">
+		<main>
+			<div class="plug-list">
+				<div class="plug-entry add-plug">
+					<button class="icon">
+						<i class="fa fa-plus"></i> Ajotuer une nouvelle prise
+					</button>
+				</div>
 			</div>
-		</div>
-	</main>
-	<section class="menu">
-		<button class="button-menu add"><i class="fa fa-plug"></i> Prises enregistrées</button>
-		<button class="button-menu add"><i class="fa fa-plus"></i> Consommation</button>
-		<button class="button-menu add"><i class="fa fa-calendar"></i> Planification</button>
-	</section>
+		</main>
+		<section class="menu">
+			<button class="button-menu add"><i class="fa fa-plug"></i> Prises enregistrées</button>
+			<button class="button-menu consumption"><i class="fa fa-plus"></i> Consommation</button>
+			<button class="button-menu add"><i class="fa fa-calendar"></i> Planification</button>
+		</section>
+	</div>
+	<div class="manager-window consumption" style="z-index: 1;">
+
+	</div>
 </body>
 </html>
 
@@ -46,6 +51,17 @@
 				<button><i class="fa fa-exclamation-circle"></i> Information</button>
 				<button><i class="fa fa-trash"></i></button> 
 			</div>
+			<div class="process">
+				<div class="parameters">
+					<p>Eteindre automatiquement ma prise et mon ordinateur quand les paramètres suivants sont répséctés:</p>
+					<div class="input-wrapper">
+						<label>Niveau de la batterie de l'ordinateur:</label>
+						<input type="number" value=100 name="battery-percentage">
+					</div>
+					<button class="save"><i class="fa fa-save"></i>Enregistrer</button>
+				</div>
+			</div>
 		</div>
+
 	</div>
 </template>
